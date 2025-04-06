@@ -1,4 +1,4 @@
-from App.models import User
+from App.models import User, Student, Staff, Admin, Company
 from App.database import db
 
 def create_user(username, password, firstname, lastname):
@@ -6,6 +6,24 @@ def create_user(username, password, firstname, lastname):
     db.session.add(newuser)
     db.session.commit()
     return newuser
+
+def create_student(username, password, firstname, lastname):
+    student = Student(username=username, password=password, firstname=firstname, lastname=lastname)
+    db.session.add(student)
+    db.session.commit()
+    return student
+
+def create_staff(company_id, username, password, firstname, lastname):
+    staff = Staff(company_id=company_id, username=username, password=password, firstname=firstname, lastname=lastname)
+    db.session.add(staff)
+    db.session.commit()
+    return staff
+
+def create_admin(company_id, username, password, firstname, lastname):
+    admin = Admin(company_id=company_id, username=username, password=password, firstname=firstname, lastname=lastname)
+    db.session.add(admin)
+    db.session.commit()
+    return admin
 
 def get_user_by_username(username):
     return User.query.filter_by(username=username).first()

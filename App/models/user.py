@@ -197,12 +197,12 @@ class Staff(User):
             return False
 
 
-
 class Company(db.Model):
     __tablename__ = 'company'
     # Fields
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(255))
 
     # Relationships
     jobs = db.relationship('Job', back_populates='company', cascade='all, delete-orphan')
@@ -235,7 +235,7 @@ class Job(db.Model):
     # Relationships
     company = db.relationship('Company', back_populates='jobs')
     applications = db.relationship('Application', back_populates='job', cascade='all, delete-orphan')
-    shortlist = db.relationship('Shortlist', back_populates='job', uselist=False, cascade='all, delete-orphan')
+    shortlist = db.relationship('Shortlist', back_populates='job', cascade='all, delete-orphan')
 
     def __init__(self, company_id, title, description) -> None:
         """Initialize a Job object with company_id, title, and description."""
