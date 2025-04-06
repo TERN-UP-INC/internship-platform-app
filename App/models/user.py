@@ -19,7 +19,7 @@ class User(db.Model):
 
     def __init__(self, username, password, firstname, lastname):
         self.username = username
-        self.password = 
+        self.password = password
         self.firstname = firstname
         self.lastname = lastname
 
@@ -27,16 +27,16 @@ class User(db.Model):
         return f"<User {self.username}>"
 
     def check_password(self, password):
-        return self.password == password  
+        return self.password == password
 
-    
+
 
 
 
 class Student(User):
     __tablename__ = 'student'
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
-    
+
     applications = db.relationship('Application', back_populates='student', cascade='all, delete-orphan')
 
     __mapper_args__ = {
