@@ -1,70 +1,113 @@
 <!doctype html>
 <html>
+
   <head>
-  
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-     <!--Import Google Icon Font-->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import Google Icon Font-->
+    <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
     <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!--Let browser know website is optimized for mobile-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}{% endblock %}</title>
 
   </head>
+  <style>
+    /* Resetting default browser styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Inter, Arial, sans-serif;
+      line-height: 1.6;
+    }
+  </style>
+
   <body>
-    
-      <nav class="purple">
-          <div class="nav-wrapper">
-              <a href="#!" class="brand-logo center">{% block page %}{% endblock %}</a>
-              <ul id="nav-mobile" class="left">
-                  <li><a href="/">Home</a></li>
-                  <li><a href="/users">Users Jinja</a></li>
-                  {% if is_authenticated %}
-                    <li><a href="/identify">Identify</a></li>
-                  {% endif %}
-                  <li><a href="/static/users">Users JS</a></li>
-              </ul>
-              {% if is_authenticated %}
-              <ul id="nav-mobile" class="right">
-                <li><a href="/logout">Logout</a></li>
-              </ul>
-              {% else %}
-              <form class="right navbar-form" method="POST" action="/login" style="display: flex; flex-wrap: nowrap; align-items: center; margin-right: 10px;">
-                  <div class="input-field" style="margin-right: 10px;">
-                      <input placeholder="username" value="bob" name="username" type="text" class="validate" required>
-                      <label for="username">username</label>
-                  </div>
-                  <div class="input-field" style="margin-right: 10px;">
-                      <input placeholder="password"value="bobpass" name="password" type="password" class="validate" required>
-                      <label for="password">Password</label>
-                  </div>
-                  <button type="submit" class="btn waves-effect waves-light">Login</button>
-              </form>
-              {% endif %}
-              
-          </div>
-      </nav>
-      <style>
-          .navbar-form label {
-              color: white !important;
-          }
-      </style>
-
-    <div class="container" id="content">{% block content %}{% endblock %}</div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script>
-       M.AutoInit();
-
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-              {% for message in messages %}
-              M.toast({html: '{{message}}'})
-              {% endfor %}
+    <nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light px-5">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">TernUp Inc.</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/users">Users Jinja</a>
+            </li>
+            {% if is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="/identify">Identify</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="/static/users">Users JS</a>
+            </li>
+          </ul>
+          {% if is_authenticated %}
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+          </ul>
+          {% else %}
+          <form class="d-flex" method="POST" action="/login">
+            <div class="me-2">
+              <input class="form-control" placeholder="username" value="bob" name="username" type="text" required>
+            </div>
+            <div class="me-2">
+              <input class="form-control" placeholder="password" value="bobpass" name="password" type="password"
+                required>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+          </form>
           {% endif %}
-        {% endwith %}
-       
+        </div>
+      </div>
+    </nav>
+
+    <main class="container mt-4 mb-4">{% block content %}{% endblock %}</main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"></script>
+    <script>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      {% for message in messages %}
+      const toastEl = document.createElement('div');
+      toastEl.className = 'toast align-items-center text-white bg-primary border-0 position-fixed';
+      toastEl.setAttribute('role', 'alert');
+      toastEl.setAttribute('aria-live', 'assertive');
+      toastEl.setAttribute('aria-atomic', 'true');
+      toastEl.style.bottom = '1rem';
+      toastEl.style.right = '1rem';
+      toastEl.style.zIndex = '1050';
+      toastEl.innerHTML = `
+        <div class="d-flex">
+          <div class="toast-body">
+            {{ message}}
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      `;
+      document.body.appendChild(toastEl);
+      const toast = new bootstrap.Toast(toastEl);
+      toast.show();
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
     </script>
   </body>
+
 </html>
