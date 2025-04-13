@@ -209,9 +209,10 @@ class Company(db.Model):
     staff_members = db.relationship('Staff', back_populates='company')
     admins = db.relationship('Admin', back_populates='company')
 
-    def __init__(self, name) -> None:
+    def __init__(self, name, description) -> None:
         """Initialize a Company object with name."""
         self.name = name
+        self.description = description
 
     def __repr__(self) -> str:
         return f"<Company {self.name}>"
@@ -264,6 +265,13 @@ class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'))
     job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    resume = db.Column(db.String(255), nullable=False)
+    cover_letter = db.Column(db.String(255), nullable=False)
+
 
     # Relationships
     student = db.relationship('Student', back_populates='applications')

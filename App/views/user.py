@@ -11,15 +11,27 @@ from App.controllers import (
     roles_required
 )
 
-from App.models import User
+from App.models import User, Company, Job
 
 user_views = Blueprint('user_views', __name__, template_folder='../templates')
 
 @user_views.route('/apply', methods=['GET'])
+@user_views.route('/apply/<int:id>', methods=['GET'])
 @roles_required(['student'])
-def get_student_apply_page():
-    user = User.query.get(jwt_current_user.id)
-    return render_template('student/apply.html')
+def get_student_apply_page(id: int = None):
+    user: User = User.query.get(jwt_current_user.id)
+
+    jobs = Job.query.all()
+    job = None
+
+    if id:
+        print(f"ID: {id}")
+        job = Job.query.get(id)
+        if not job:
+            flash(f"Job with id {id} not found")
+            return redirect(request.referrer or url_for('user_views.get_student_apply_page'))
+
+    return render_template('student/apply.html', jobs=jobs, selected_job=job)
 
 @user_views.route('/applications', methods=['GET'])
 @roles_required(['student'])

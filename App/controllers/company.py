@@ -3,7 +3,7 @@ from App.database import db
 
 
 def create_company(name, description) -> Company:
-    company = Company(name=name)
+    company = Company(name=name, description=description)
     db.session.add(company)
     db.session.commit()
     return company
