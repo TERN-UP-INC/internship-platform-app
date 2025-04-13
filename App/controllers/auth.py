@@ -45,7 +45,7 @@ def add_auth_context(app):
           current_user = None
       return dict(is_authenticated=is_authenticated, current_user=current_user)
 
-def role_required(required_role):
+def roles_required(required_roles):
     def decorator(fn):
         @wraps(fn)
         def wrapper(*args, **kwargs):
@@ -55,7 +55,7 @@ def role_required(required_role):
 
             if not user:
                 return jsonify({"msg": "User not found"}), 404
-            if user.type != required_role:
+            if user.type not in required_roles:
                 return render_template("401.html"), 401
             return fn(*args, **kwargs)
         return wrapper
