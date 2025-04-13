@@ -42,18 +42,11 @@
             <li class="nav-item">
               <a class="nav-link" href="/">Home</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/users">Users Jinja</a>
-            </li>
             {% if is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link" href="/identify">Identify</a>
-            </li>
+            {% block user_routes %}{% endblock %}
             {% endif %}
-            <li class="nav-item">
-              <a class="nav-link" href="/static/users">Users JS</a>
-            </li>
           </ul>
+
           {% if is_authenticated %}
           <ul class="navbar-nav">
             <li class="nav-item">
@@ -94,13 +87,13 @@
       toastEl.style.right = '1rem';
       toastEl.style.zIndex = '1050';
       toastEl.innerHTML = `
-        <div class="d-flex">
-          <div class="toast-body">
-            {{ message}}
-          </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-      `;
+            <div class="d-flex">
+              <div class="toast-body">
+                {{ message}}
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+          `;
       document.body.appendChild(toastEl);
       const toast = new bootstrap.Toast(toastEl);
       toast.show();

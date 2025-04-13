@@ -11,21 +11,15 @@ from App.controllers import (
 auth_views = Blueprint('auth_views', __name__, template_folder='../templates')
 
 
-
-
 '''
 Page/Action Routes
-'''    
-@auth_views.route('/users', methods=['GET'])
-def get_user_page():
-    users = get_all_users()
-    return render_template('users.html', users=users)
+'''
 
 @auth_views.route('/identify', methods=['GET'])
 @jwt_required()
 def identify_page():
     return render_template('message.html', title="Identify", message=f"You are logged in as {current_user.id} - {current_user.username}")
-    
+
 
 @auth_views.route('/login', methods=['POST'])
 def login_action():
@@ -36,12 +30,12 @@ def login_action():
         flash('Bad username or password given'), 401
     else:
         flash('Login Successful')
-        set_access_cookies(response, token) 
+        set_access_cookies(response, token)
     return response
 
 @auth_views.route('/logout', methods=['GET'])
 def logout_action():
-    response = redirect(request.referrer) 
+    response = redirect(request.referrer)
     flash("Logged Out!")
     unset_jwt_cookies(response)
     return response
@@ -56,7 +50,7 @@ def user_login_api():
   token = login(data['username'], data['password'])
   if not token:
     return jsonify(message='bad username or password given'), 401
-  response = jsonify(access_token=token) 
+  response = jsonify(access_token=token)
   set_access_cookies(response, token)
   return response
 

@@ -1,22 +1,22 @@
 {% extends "layout.html" %}
 {% block title %}TernUp Inc.{% endblock %}
-{% block page %}Home{% endblock %}
+{% block page %}Apply{% endblock %}
 
 {{ super() }}
 
-<!-- {% block user_routes %}
+{% block user_routes %}
 <li class="nav-item">
     <a class="nav-link" href="/apply">Apply</a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="/applications">My Applications</a>
+    <a class="nav-link active" href="/applications">My Applications</a>
 </li>
-{% endblock %} -->
+{% endblock %}
 
 {% block content %}
-<h1>Flask MVC</h1>
+<h1>Applications</h1>
 {% if is_authenticated %}
 <p> Welcome {{current_user.username}} </p>
 {% endif %}
-<p>This is a boileplate flask application which follows the MVC pattern for structuring the project.</p>
+<p>Fill out the form below to apply for a job at TernUp Inc.</p>
 {% endblock %}
