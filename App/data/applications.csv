@@ -1,9 +1,10 @@
-id,student_id,job_id
-1,4,2
-2,6,1
-3,2,1
-4,6,3
-5,4,3
-6,3,1
-7,1,3
-8,1,2
+id,student_id,job_id,first_name,last_name,phone,email,cover_letter
+1,4,2,Amy,Huffman,555-1122,amy.huffman@example.com,"I am excited to apply for the Actor position. I have prior experience in theater and student films."
+2,6,1,David,Park,555-2233,david.park@example.com,"As a recent graduate in education, I'm passionate about becoming a Further Education Lecturer."
+3,2,1,Angela,Martin,555-3344,angela.martin@example.com,"With a background in humanities, I’m eager to contribute to your education initiatives."
+4,6,3,David,Park,555-2233,david.park@example.com,"I’m fluent in Spanish and have experience tutoring ESL. Excited to apply for this role."
+5,4,3,Amy,Huffman,555-1122,amy.huffman@example.com,"I'm pursuing a career in language education and believe I’d thrive as an EFL teacher."
+6,3,1,Charles,Gonzalez,555-4455,charles.gonzalez@example.com,"I have a strong passion for education and working with diverse student groups."
+7,1,3,David,Watkins,555-5566,david.watkins@example.com,"My interest in linguistics and communication makes me a strong candidate for this role."
+8,1,2,David,Watkins,555-5566,david.watkins@example.com,"I've always enjoyed acting and would love to bring my energy and enthusiasm to your production."
+9,7,4,John,Smith,555-6677,john.smith@example.com,"I have hands-on experience in media production and am excited about the opportunity to work as a Radio Producer."

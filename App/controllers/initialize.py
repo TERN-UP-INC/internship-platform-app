@@ -8,7 +8,6 @@ import os
 def initialize():
     db.drop_all()
     db.create_all()
-    create_student(username='bob', password='bobpass', firstname='Bob', lastname='Smith')
 
     project_root = os.path.dirname(os.path.abspath(__file__))
 
@@ -52,13 +51,21 @@ def initialize():
     with open(csv_path, 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            create_application(job_id=row['id'], student_id=row['student_id'])
+            create_application(
+                student_id=row['student_id'],
+                job_id=row['id'],
+                first_name=row['first_name'],
+                last_name=row['last_name'],
+                phone=row['phone'],
+                email=row['email'],
+                cover_letter=row['cover_letter']
+            )
 
     # Shortlist
     csv_path = os.path.join(project_root, '../data/shortlists.csv')
     with open(csv_path, 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            add_student_to_shortlist(job_id=row['id'], student_id=row['student_id'])
+            add_student_to_shortlist(job_id=row['id'], application_id=row['application_id'])
 
 

@@ -8,21 +8,29 @@ def create_company(name, description) -> Company:
     db.session.commit()
     return company
 
-def add_student_to_shortlist(job_id, student_id) -> bool:
+def add_student_to_shortlist(job_id, application_id) -> bool:
     job = Job.query.get(job_id)
-    student = Student.query.get(student_id)
-    if job and student:
-        shortlist = Shortlist(job_id=job.id, student_id=student.id)
+    application = Application.query.get(application_id)
+    if job and application:
+        shortlist = Shortlist(job_id=job.id, application_id=application.id)
         db.session.add(shortlist)
         db.session.commit()
         return True
     return False
 
-def create_application(job_id, student_id) -> bool:
+def create_application(student_id, job_id, first_name, last_name, phone, email, cover_letter) -> bool:
     job = Job.query.get(job_id)
     student = Student.query.get(student_id)
     if job and student:
-        application = Application(job_id=job.id, student_id=student.id)
+        application = Application(
+            job_id=job.id,
+            student_id=student.id,
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone,
+            email=email,
+            cover_letter=cover_letter
+        )
         db.session.add(application)
         db.session.commit()
         return True
