@@ -30,21 +30,24 @@ def initialize():
     with open(csv_path, 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            create_admin(company_id=row['id'], username=row['username'], password=row['password'], firstname=row['firstname'], lastname=row['lastname'])
+            create_admin(company_id=row['company_id'], username=row['username'], password=row['password'], firstname=row['firstname'], lastname=row['lastname'])
 
     # Staff
     csv_path = os.path.join(project_root, '../data/staff.csv')
     with open(csv_path, 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            create_staff(company_id=row['id'], username=row['username'], password=row['password'], firstname=row['firstname'], lastname=row['lastname'])
+            create_staff(company_id=row['company_id'], username=row['username'], password=row['password'], firstname=row['firstname'], lastname=row['lastname'])
 
     # Jobs
     csv_path = os.path.join(project_root, '../data/jobs.csv')
     with open(csv_path, 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            create_job(company_id=row['id'], title=row['title'], description=row['description'])
+            result = create_job(company_id=row['company_id'], title=row['title'], description=row['description'])
+
+            if not result:
+                print(f"Failed to create job: {row['title']}")
 
     # Applications
     csv_path = os.path.join(project_root, '../data/applications.csv')
@@ -66,6 +69,6 @@ def initialize():
     with open(csv_path, 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            add_student_to_shortlist(job_id=row['id'], application_id=row['application_id'])
+            add_student_to_shortlist(job_id=row['job_id'], application_id=row['application_id'])
 
 

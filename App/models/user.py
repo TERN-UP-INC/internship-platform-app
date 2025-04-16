@@ -192,7 +192,7 @@ class Application(db.Model):
     # Relationships
     student = db.relationship('Student', back_populates='applications')
     job = db.relationship('Job', back_populates='applications')
-    shortlists = db.relationship('Shortlist', back_populates='application', cascade='all, delete-orphan')
+    shortlist = db.relationship('Shortlist', back_populates='application', cascade='all, delete-orphan')
 
     def __init__(self, student_id, job_id, first_name, last_name, phone, email, cover_letter) -> None:
         self.student_id = student_id
@@ -226,7 +226,7 @@ class Shortlist(db.Model):
     application_id = db.Column(db.Integer, db.ForeignKey('application.id'))
 
     # Relationships
-    application = db.relationship('Application', back_populates='shortlists')
+    application = db.relationship('Application', back_populates='shortlist')
     job = db.relationship('Job', back_populates='shortlists')
 
     def __init__(self, job_id, application_id) -> None:

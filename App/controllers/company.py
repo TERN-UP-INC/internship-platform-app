@@ -37,19 +37,31 @@ def create_application(student_id, job_id, first_name, last_name, phone, email, 
     return False
 
 def create_job(company_id, title, description) -> bool:
-    company = Company.query.get(company_id)
-    if company:
-        job = Job(company_id=company.id, title=title, description=description)
-        db.session.add(job)
-        db.session.commit()
-        return True
+    try:
+        company = Company.query.get(company_id)
+        if company:
+            job = Job(company_id=company.id, title=title, description=description)
+            # print(f"Creating job: {job}")
+            db.session.add(job)
+            db.session.commit()
+            return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error creating job for company_id={company_id}, title={title}: {e}")
+
     return False
 
 def get_all_companies():
     return Company.query.all()
 
-def get_all_jobs():
-    return Job.query.all()
+def get_all_jobs(company_id):
+    jobs = Job.query.filter_by(company_id=company_id).all()
+    return jobs
+
+def get_job_by_id(job_id) -> Job | None:
+    job = Job.query.get(job_id)
+    return job
+
 
 def get_all_students():
     return Student.query.all()
