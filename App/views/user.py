@@ -12,7 +12,9 @@ from App.controllers import (
     get_job_by_id,
     jwt_required,
     roles_required,
-    create_application
+    create_application,
+    create_job,
+    create_shortlist
 )
 
 from App.models import User, Company, Job, Student, Staff, Admin
@@ -109,3 +111,50 @@ def create_user_action():
     flash(f"User {data['username']} created!")
     create_user(data['username'], data['password'])
     return redirect(url_for('user_views.get_user_page'))
+
+@user_views.route('/jobs', methods=['POST'])
+@roles_required(['admin', 'staff'])
+def create_job_action():
+    data = request.form
+
+    user = get_user(jwt_current_user.id)
+
+    if user.type == 'admin':
+        user = Admin.query.get(user.id)
+    elif user.type == 'staff':
+        user = Staff.query.get(user.id)
+
+    result: bool = create_job(
+        company_id=user.company_id,
+        title=data.get['title'],
+        description=data.get['description'],
+        requirements=data.get['requirements'],
+        salary_range=data.get['salary_type'],
+        location=data.get['location']
+    )
+
+    if not result:
+        flash("Failed to create job")
+        return redirect(request.referrer or url_for('user_views.get_job_page'))
+
+    flash(f"Job {data['title']} created!")
+    return redirect(request.referrer or url_for('user_views.get_job_page'))
+
+@user_views.route('/shortlist/<int:job_id>', methods=['POST'])
+@roles_required
+def create_shortlist_action(job_id):
+    data = request.form
+    applicationID = request.form.get('applicationID')
+
+    result:bool = create_shortlist(
+        job_id=job_id,
+        application_id=applicationID,
+        notes=data.get('notes'),
+    )
+
+    if not result:
+        flash("Failed to create shortlist")
+        return redirect(request.referrer or url_for('user_views.get_shortlists_page'))
+    else:
+        flash("Shortlist created!")
+        return redirect(request.referrer or url_for('user_views.get_shortlists_page'))
