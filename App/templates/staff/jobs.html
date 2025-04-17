@@ -81,10 +81,10 @@
                                         {{ application.cover_letter }}
                                     </td>
                                     <td>
-                                        <form method="{% if application.shortlist %}DELETE{% else %}POST{% endif %}"
-                                            action="/shortlists/{{ application.id }}">
+                                        <form method="POST" action="/shortlists/{{ application.id }}">
                                             <input type="hidden" name="job_id" value="{{ selected_job.id }}">
-                                            <input type="hidden" name="student_id" value="{{ application.student.id }}">
+                                            <input type="hidden" name="method"
+                                                value="{% if application.shortlist %}DELETE{% else %}POST{% endif %}" />
                                             {% if application.shortlist %}
                                             <button type="submit" style="width: 5em;"
                                                 class="btn btn-danger">Remove</button>

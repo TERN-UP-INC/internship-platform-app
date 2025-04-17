@@ -53,7 +53,7 @@ def create_application(student_id, job_id, first_name, last_name, phone, email, 
         db.session.rollback()
         print(f"Error creating application for student_id={student_id}, job_id={job_id}: {e}")
     return None
-    
+
 def create_job(company_id, title, description) -> bool:
     try:
         company = Company.query.get(company_id)
@@ -69,6 +69,31 @@ def create_job(company_id, title, description) -> bool:
 
     return False
 
+def delete_shortlist(shortlist_id) -> bool:
+    try:
+        shortlist = Shortlist.query.get(shortlist_id)
+        if shortlist:
+            db.session.delete(shortlist)
+            db.session.commit()
+            return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting shortlist with id={shortlist_id}: {e}")
+    return False
+
+def delete_application(application_id) -> bool:
+    try:
+        application = Application.query.get(application_id)
+        if application:
+            db.session.delete(application)
+            db.session.commit()
+            return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting application with id={application_id}: {e}")
+    return False
+
+
 def get_all_companies() -> list[Company]:
     return Company.query.all()
 
@@ -76,10 +101,9 @@ def get_all_jobs(company_id) -> list[Job]:
     jobs = Job.query.filter_by(company_id=company_id).all()
     return jobs
 
-def get_job_by_id(job_id):
+def get_job_by_id(job_id) -> Job:
     job = Job.query.get(job_id)
     return job
-
 
 def get_all_students():
     return Student.query.all()
