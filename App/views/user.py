@@ -14,10 +14,15 @@ from App.controllers import (
     roles_required,
     create_application,
     create_job,
-    create_shortlist
+    create_shortlist,
+    delete_shortlist,
+    delete_application,
+    delete_job,
+    create_job,
+    get_admin
 )
 
-from App.models import User, Company, Job, Student, Staff, Admin
+from App.models import User, Company, Job, Student, Staff, Admin, Application, Shortlist
 
 user_views = Blueprint('user_views', __name__, template_folder='../templates')
 
@@ -74,9 +79,41 @@ def get_student_applications_page():
     student = Student.query.get(jwt_current_user.id)
     applications = [application for application in student.applications]
 
-    print(f"Applications: {applications}")
-
     return render_template('student/applications.html', applications=applications)
+
+@user_views.route('/applications/delete/<int:application_id>', methods=['POST'])
+@roles_required(['student', 'admin'])
+def delete_student_application_action(application_id: int):
+    application = Application.query.get(application_id)
+    if not application:
+        flash("Application not found")
+        return redirect(request.referrer or url_for('user_views.get_student_applications_page'))
+
+    result: bool = delete_application(application_id)
+    if not result:
+        flash("Failed to delete application")
+    else:
+        flash("Application deleted!")
+
+    return redirect(request.referrer or url_for('user_views.get_student_applications_page'))
+
+@user_views.route('/jobs/delete/<int:job_id>', methods=['POST'])
+@roles_required(['admin'])
+def delete_job_action(job_id: int):
+    job = Job.query.get(job_id)
+    if not job:
+        flash("Job not found")
+        return redirect(request.referrer or url_for('user_views.get_job_page'))
+
+    result: bool = delete_job(job_id)
+
+    if not result:
+        flash("Failed to delete job")
+    else:
+        flash("Job deleted!")
+
+    return redirect(request.referrer or url_for('user_views.get_job_page'))
+
 
 @user_views.route('/jobs', methods=['GET'])
 @user_views.route('/jobs/<int:id>', methods=['GET'])
@@ -98,11 +135,12 @@ def get_job_page(id: int = None):
 
     return render_template(f'{user.type}/jobs.html', jobs=jobs)
 
-@user_views.route('/shortlists', methods=['GET'])
+
+@user_views.route('/new-job', methods=['GET'])
 @roles_required(['admin'])
 def get_shortlists_page():
     user = User.query.get(jwt_current_user.id)
-    return render_template('admin/shortlists.html')
+    return render_template('admin/new-job.html')
 
 @user_views.route('/users', methods=['POST'])
 def create_user_action():
@@ -113,24 +151,16 @@ def create_user_action():
     return redirect(url_for('user_views.get_user_page'))
 
 @user_views.route('/jobs', methods=['POST'])
-@roles_required(['admin', 'staff'])
+@roles_required(['admin'])
 def create_job_action():
     data = request.form
 
-    user = get_user(jwt_current_user.id)
-
-    if user.type == 'admin':
-        user = Admin.query.get(user.id)
-    elif user.type == 'staff':
-        user = Staff.query.get(user.id)
+    user = get_admin(jwt_current_user.id)
 
     result: bool = create_job(
         company_id=user.company_id,
-        title=data.get['title'],
-        description=data.get['description'],
-        requirements=data.get['requirements'],
-        salary_range=data.get['salary_type'],
-        location=data.get['location']
+        title=data.get('title'),
+        description=data.get('description')
     )
 
     if not result:
@@ -140,21 +170,39 @@ def create_job_action():
     flash(f"Job {data['title']} created!")
     return redirect(request.referrer or url_for('user_views.get_job_page'))
 
-@user_views.route('/shortlist/<int:job_id>', methods=['POST'])
-@roles_required
-def create_shortlist_action(job_id):
+@user_views.route('/shortlists/<int:application_id>', methods=['POST'])
+@roles_required(["admin", "staff"])
+def create_shortlist_action(application_id: int):
     data = request.form
-    applicationID = request.form.get('applicationID')
+    job_id, method = data.get('job_id'), data.get('method')
+    application = Application.query.get(application_id)
 
-    result:bool = create_shortlist(
-        job_id=job_id,
-        application_id=applicationID,
-        notes=data.get('notes'),
-    )
-
-    if not result:
-        flash("Failed to create shortlist")
+    if not job_id or not application:
+        flash("Invalid application")
         return redirect(request.referrer or url_for('user_views.get_shortlists_page'))
+
+    if method == 'POST':
+        result: bool = create_shortlist(
+            job_id=job_id,
+            application_id=application_id
+        )
+
+        if not result:
+            flash("Failed to create shortlist")
+        else:
+            flash("Shortlist created!")
+    elif method == 'DELETE':
+        shortlist = Shortlist.query.filter_by(application_id=application_id).first()
+
+        if shortlist:
+            result: bool = delete_shortlist(shortlist.id)
+            if not result:
+                flash("Failed to delete shortlist")
+            else:
+                flash("Shortlist deleted!")
+        else:
+            flash("Shortlist not found")
     else:
-        flash("Shortlist created!")
-        return redirect(request.referrer or url_for('user_views.get_shortlists_page'))
+        flash("Invalid method")
+
+    return redirect(request.referrer or url_for('user_views.get_shortlists_page'))

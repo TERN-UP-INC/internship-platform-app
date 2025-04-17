@@ -30,19 +30,33 @@
                     </div>
                 </div>
                 {% if jobs %}
-                <ul class="list-group mt-3" style="max-height: 450px; overflow-y: auto;">
+                <ul class="list-group mt-3" style="max-height: 450px; overflow-y: auto;" id="job-list">
                     {% for job in jobs %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center job-item"
+                    <li class="list-group-item d-flex justify-content-between align-items-center job-item {% if selected_job and job.id == selected_job.id %}active{% endif %}"
                         data-title="{{ job.title | lower }}" data-company="{{ job.company.name | lower }}">
                         <div>
                             <h5 class="bold job-title"><strong>{{ job.title }}</strong></h5>
                             <p class="mb-1">{{ job.description }}</p>
-                            <small class="text-muted company-name">Company: {{ job.company.name }}</small>
+                            <small
+                                class="company-name {% if selected_job and job.id == selected_job.id %}text-light{% else %}text-muted{% endif %}">Company:
+                                {{ job.company.name }}</small>
                         </div>
+                        {% if not selected_job or job.id != selected_job.id %}
                         <a href="/jobs/{{ job.id }}" class="btn btn-primary">Select</a>
+                        {% endif %}
                     </li>
                     {% endfor %}
                 </ul>
+                <script>
+                    document.addEventListener('DOMContentLoaded', () =>
+                    {
+                        const selectedJob = document.querySelector('.list-group-item.active');
+                        if (selectedJob)
+                        {
+                            selectedJob.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    });
+                </script>
                 {% else %}
                 <div class="alert alert-info mt-3" role="alert">
                     No jobs are currently available for application. Please check back later.
@@ -81,10 +95,10 @@
                                         {{ application.cover_letter }}
                                     </td>
                                     <td>
-                                        <form method="{% if application.shortlist %}DELETE{% else %}POST{% endif %}"
-                                            action="/shortlists/{{ application.id }}">
+                                        <form method="POST" action="/shortlists/{{ application.id }}">
                                             <input type="hidden" name="job_id" value="{{ selected_job.id }}">
-                                            <input type="hidden" name="student_id" value="{{ application.student.id }}">
+                                            <input type="hidden" name="method"
+                                                value="{% if application.shortlist %}DELETE{% else %}POST{% endif %}" />
                                             {% if application.shortlist %}
                                             <button type="submit" style="width: 5em;"
                                                 class="btn btn-danger">Remove</button>
