@@ -59,7 +59,6 @@ def create_job(company_id, title, description) -> bool:
         company = Company.query.get(company_id)
         if company:
             job = Job(company_id=company.id, title=title, description=description)
-            # print(f"Creating job: {job}")
             db.session.add(job)
             db.session.commit()
             return True
@@ -67,6 +66,18 @@ def create_job(company_id, title, description) -> bool:
         db.session.rollback()
         print(f"Error creating job for company_id={company_id}, title={title}: {e}")
 
+    return False
+
+def delete_job(job_id) -> bool:
+    try:
+        job = Job.query.get(job_id)
+        if job:
+            db.session.delete(job)
+            db.session.commit()
+            return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting job with id={job_id}: {e}")
     return False
 
 def delete_shortlist(shortlist_id) -> bool:

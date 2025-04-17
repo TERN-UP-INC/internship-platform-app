@@ -28,6 +28,9 @@ def create_admin(company_id, username, password, firstname, lastname):
 def get_user_by_username(username):
     return User.query.filter_by(username=username).first()
 
+def get_admin(id) -> Admin:
+    return Admin.query.get(id)
+
 def get_user(id):
     return User.query.get(id)
 

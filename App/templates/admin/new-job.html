@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}TernUp Inc.{% endblock %}
+{% block page %}Shortlists{% endblock %}
+
+{{ super() }}
+
+{% block user_routes %}
+<li class="nav-item">
+    <a class="nav-link" href="/jobs">Jobs</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" href="/new-job">New Job</a>
+</li>
+{% endblock %}
+
+{% block content %}
+<main>
+    <h1>Create a new internship position</h1>
+    <p>Fill out the form below to create a new internship position.</p>
+    <form method="POST" action="/jobs">
+        <div class="mb-3">
+            <label for="title" class="form-label">Job Title</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Enter job title" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Job Description</label>
+            <textarea class="form-control" id="description" required name="description" rows="3"
+                placeholder="Enter job description"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Job</button>
+    </form>
+</main>
+
+{% endblock %}

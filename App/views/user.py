@@ -16,7 +16,10 @@ from App.controllers import (
     create_job,
     create_shortlist,
     delete_shortlist,
-    delete_application
+    delete_application,
+    delete_job,
+    create_job,
+    get_admin
 )
 
 from App.models import User, Company, Job, Student, Staff, Admin, Application, Shortlist
@@ -94,6 +97,23 @@ def delete_student_application_action(application_id: int):
 
     return redirect(request.referrer or url_for('user_views.get_student_applications_page'))
 
+@user_views.route('/jobs/delete/<int:job_id>', methods=['POST'])
+@roles_required(['admin'])
+def delete_job_action(job_id: int):
+    job = Job.query.get(job_id)
+    if not job:
+        flash("Job not found")
+        return redirect(request.referrer or url_for('user_views.get_job_page'))
+
+    result: bool = delete_job(job_id)
+
+    if not result:
+        flash("Failed to delete job")
+    else:
+        flash("Job deleted!")
+
+    return redirect(request.referrer or url_for('user_views.get_job_page'))
+
 
 @user_views.route('/jobs', methods=['GET'])
 @user_views.route('/jobs/<int:id>', methods=['GET'])
@@ -115,11 +135,12 @@ def get_job_page(id: int = None):
 
     return render_template(f'{user.type}/jobs.html', jobs=jobs)
 
-@user_views.route('/shortlists', methods=['GET'])
+
+@user_views.route('/new-job', methods=['GET'])
 @roles_required(['admin'])
 def get_shortlists_page():
     user = User.query.get(jwt_current_user.id)
-    return render_template('admin/shortlists.html')
+    return render_template('admin/new-job.html')
 
 @user_views.route('/users', methods=['POST'])
 def create_user_action():
@@ -130,21 +151,16 @@ def create_user_action():
     return redirect(url_for('user_views.get_user_page'))
 
 @user_views.route('/jobs', methods=['POST'])
-@roles_required(['admin', 'staff'])
+@roles_required(['admin'])
 def create_job_action():
     data = request.form
 
-    user = get_user(jwt_current_user.id)
-
-    if user.type == 'admin':
-        user = Admin.query.get(user.id)
-    elif user.type == 'staff':
-        user = Staff.query.get(user.id)
+    user = get_admin(jwt_current_user.id)
 
     result: bool = create_job(
         company_id=user.company_id,
-        title=data.get['title'],
-        description=data.get['description']
+        title=data.get('title'),
+        description=data.get('description')
     )
 
     if not result:
