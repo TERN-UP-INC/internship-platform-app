@@ -132,6 +132,8 @@ class Company(db.Model):
     jobs = db.relationship('Job', back_populates='company', cascade='all, delete-orphan')
     staff_members = db.relationship('Staff', back_populates='company')
     admins = db.relationship('Admin', back_populates='company')
+    applications = db.relationship('Application', back_populates='company')
+    shortlists = db.relationship('Shortlist', back_populates='company', cascade='all, delete-orphan')
 
     def __init__(self, name, description) -> None:
         self.name = name
@@ -159,6 +161,7 @@ class Job(db.Model):
     company = db.relationship('Company', back_populates='jobs')
     applications = db.relationship('Application', back_populates='job', cascade='all, delete-orphan')
     shortlists = db.relationship('Shortlist', back_populates='job', cascade='all, delete-orphan')
+
 
     def __init__(self, company_id, title, description) -> None:
         self.company_id = company_id
@@ -188,10 +191,12 @@ class Application(db.Model):
     phone = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     cover_letter = db.Column(db.String(255), nullable=False)
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'))
 
     # Relationships
     student = db.relationship('Student', back_populates='applications')
     job = db.relationship('Job', back_populates='applications')
+    company = db.relationship('Company', back_populates='applications')
     shortlist = db.relationship('Shortlist', back_populates='application', cascade='all, delete-orphan')
 
     def __init__(self, student_id, job_id, first_name, last_name, phone, email, cover_letter) -> None:
@@ -224,10 +229,12 @@ class Shortlist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
     application_id = db.Column(db.Integer, db.ForeignKey('application.id'))
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'))
 
     # Relationships
     application = db.relationship('Application', back_populates='shortlist')
     job = db.relationship('Job', back_populates='shortlists')
+    company = db.relationship('Company', back_populates='shortlists')
 
     def __init__(self, job_id, application_id) -> None:
         self.job_id = job_id
@@ -242,3 +249,8 @@ class Shortlist(db.Model):
             'job_id': self.job_id,
             'application_id': self.application_id
         }
+    
+
+__table_args__ = (
+    db.UniqueConstraint('job_id', 'application_id', name='_job_application_uc'),
+)
