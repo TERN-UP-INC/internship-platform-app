@@ -64,6 +64,13 @@ class Student(User):
 
     def __repr__(self):
         return f"<Student {self.username}>"
+    def get_json(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'firstname': self.firstname,
+            'lastname': self.lastname
+        }
 
     @staticmethod
     def __file_is_allowed(filename: str) -> bool:
