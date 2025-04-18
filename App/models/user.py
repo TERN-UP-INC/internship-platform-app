@@ -1,5 +1,9 @@
 from werkzeug.security import check_password_hash, generate_password_hash
 from App.database import db
+from werkzeug.datastructures import FileStorage
+from werkzeug.utils import secure_filename
+from flask import current_app as app
+import os
 
 
 class User(db.Model):
@@ -46,6 +50,7 @@ class Student(User):
     __tablename__ = 'student'
     # Fields
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    resume = db.Column(db.String(255), nullable=True)
 
     # Relationships
     applications = db.relationship('Application', back_populates='student', cascade='all, delete-orphan')
@@ -59,6 +64,37 @@ class Student(User):
 
     def __repr__(self):
         return f"<Student {self.username}>"
+
+    @staticmethod
+    def __file_is_allowed(filename: str) -> bool:
+        allowed_extensions = {'pdf'}
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
+    def upload_resume(self, file: FileStorage) -> bool:
+        print(self.__file_is_allowed(file.filename))
+        if file and self.__file_is_allowed(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config.get('UPLOAD_FOLDER'), filename)
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
+            file.save(filepath)
+
+            self.resume = filename
+            db.session.add(self)
+            db.session.commit()
+            return True
+
+        return False
+
+    def delete_resume(self) -> bool:
+        if self.resume:
+            filepath = os.path.join(app.config.get('UPLOAD_FOLDER'), self.resume)
+            if os.path.exists(filepath):
+                os.remove(filepath)
+                self.resume = None
+                db.session.add(self)
+                db.session.commit()
+                return True
+        return False
 
 
 class Admin(User):
@@ -249,7 +285,7 @@ class Shortlist(db.Model):
             'job_id': self.job_id,
             'application_id': self.application_id
         }
-    
+
 
 __table_args__ = (
     db.UniqueConstraint('job_id', 'application_id', name='_job_application_uc'),

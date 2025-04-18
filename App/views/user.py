@@ -1,26 +1,10 @@
 from flask import Blueprint, render_template, jsonify, request, send_from_directory, flash, redirect, url_for
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
+from werkzeug.datastructures import FileStorage
 
 from.index import index_views
 
-from App.controllers import (
-    create_user,
-    get_all_users,
-    get_all_users_json,
-    get_user,
-    get_all_jobs,
-    get_job_by_id,
-    jwt_required,
-    roles_required,
-    create_application,
-    create_job,
-    create_shortlist,
-    delete_shortlist,
-    delete_application,
-    delete_job,
-    create_job,
-    get_admin
-)
+from App.controllers import *
 
 from App.models import User, Company, Job, Student, Staff, Admin, Application, Shortlist
 
@@ -36,7 +20,6 @@ def get_student_apply_page(id: int = None):
     job = None
 
     if id:
-        print(f"ID: {id}")
         job = Job.query.get(id)
         if not job:
             flash(f"Job with id {id} not found")
@@ -44,20 +27,27 @@ def get_student_apply_page(id: int = None):
 
     return render_template('student/apply.html', jobs=jobs, selected_job=job)
 
-@user_views.route('/apply/<int:id>', methods=['POST'])
+@user_views.route('/apply/<int:job_id>', methods=['POST'])
 @roles_required(['student'])
-def post_student_apply_page(id: int = None):
-    user: User = User.query.get(jwt_current_user.id)
-    job = Job.query.get(id)
+def post_student_apply_page(job_id: int = None):
+    student: Student = get_student(jwt_current_user.id)
+    job = Job.query.get(job_id)
 
-    if not job or not user:
-        flash("Invalid job or user")
+    if not job or not student:
+        flash("Invalid job or student")
         return redirect(request.referrer or url_for('user_views.get_student_apply_page'))
 
     data = request.form
+    file: FileStorage = request.files.get('resume')
+
+    print(file)
+
+    if not file:
+        flash("Resume file is required")
+        return redirect(request.referrer or url_for('user_views.get_student_apply_page'))
 
     result: bool = create_application(
-        student_id=user.id,
+        student_id=student.id,
         job_id=job.id,
         first_name=data.get('first_name'),
         last_name=data.get('last_name'),
@@ -68,6 +58,11 @@ def post_student_apply_page(id: int = None):
 
     if not result:
         flash("Failed to create application")
+        return redirect(request.referrer or url_for('user_views.get_student_apply_page'))
+
+    if not student.upload_resume(file):
+        db.session.rollback()
+        flash("Failed to upload resume")
         return redirect(request.referrer or url_for('user_views.get_student_apply_page'))
 
     flash(f"Application for {job.title} submitted!")

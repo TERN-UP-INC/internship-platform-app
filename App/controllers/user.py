@@ -34,6 +34,9 @@ def get_admin(id) -> Admin:
 def get_user(id):
     return User.query.get(id)
 
+def get_student(id):
+    return Student.query.get(id)
+
 def get_all_users():
     return User.query.all()
 
