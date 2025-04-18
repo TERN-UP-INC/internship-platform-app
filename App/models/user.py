@@ -80,7 +80,7 @@ class Student(User):
     def upload_resume(self, file: FileStorage) -> bool:
         print(self.__file_is_allowed(file.filename))
         if file and self.__file_is_allowed(file.filename):
-            filename = secure_filename(file.filename)
+            filename = f"resume_{self.id}.pdf"
             filepath = os.path.join(app.config.get('UPLOAD_FOLDER'), filename)
             os.makedirs(os.path.dirname(filepath), exist_ok=True)
             file.save(filepath)

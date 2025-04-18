@@ -47,7 +47,6 @@ def logout_action():
 @auth_views.route('/signup', methods=['GET'])
 @jwt_required(optional=True)
 def signup_page():
-
     if current_user:
         return redirect(url_for('index_views.index_page'))
 
@@ -57,32 +56,42 @@ def signup_page():
 @auth_views.route('/signup', methods=['POST'])
 def signup_action():
     data = request.form
+
     if get_user_by_username(data['username']):
         flash('Username already exists')
         return redirect(url_for('auth_views.signup_action'))
+
     if get_user_by_username(data['username']):
         flash('Username already exists')
         return redirect(url_for('auth_views.signup_action'))
+
     if data['password'] != data['confirm_password']:
         flash('Password and Confirm Password do not match')
         return redirect(url_for('auth_views.signup_action'))
-    new_student = create_student(
-        username=data['username'],
-        password=data['password'],
-        firstname=data['FirstName'],
-        lastname=data['LastName'],
-    )
 
-    csv_file_path = os.path.join(os.path.dirname(__file__), '../data/students.csv')
-    with open(csv_file_path, mode='a', newline='') as csv_file:
-        csv_writer = csv.writer(csv_file)
-        csv_writer.writerow([new_student.id, data['username'], data['password'], data['FirstName'], data['LastName']])
+    try:
+        new_student = create_student(
+            username=data['username'],
+            password=data['password'],
+            firstname=data['firstname'],
+            lastname=data['lastname'],
+        )
 
-    token = login(data['username'], data['password'])
-    response = redirect(url_for('index_views.index_page'))
-    set_access_cookies(response, token)
-    flash('Signup Successful')
-    return response
+        # csv_file_path = os.path.join(os.path.dirname(__file__), '../data/students.csv')
+        # with open(csv_file_path, mode='a', newline='') as csv_file:
+        #     csv_writer = csv.writer(csv_file)
+        #     csv_writer.writerow([new_student.id, data['username'], data['password'], data['firstname'], data['lastname']])
+
+        token = login(data['username'], data['password'])
+        response = redirect(url_for('index_views.index_page'))
+        set_access_cookies(response, token)
+
+        flash('Signup Successful')
+        return response
+
+    except Exception as e:
+        flash(f"An error occurred: {str(e)}")
+        return redirect(url_for('auth_views.signup_page'))
 
 
 '''

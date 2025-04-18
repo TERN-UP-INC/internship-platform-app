@@ -4,6 +4,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 App/custom_config.py
+App/uploads/
 # C extensions
 *.so
 

@@ -53,19 +53,23 @@
             </li>
           </ul>
           {% else %}
-          <div class="d-flex gap-2">
-            <form class="d-flex" method="POST" action="/login">
-              <div class="me-2">
-                <input class="form-control" placeholder="username" value="bob" name="username" type="text" required>
-              </div>
-              <div class="me-2">
-                <input class="form-control" placeholder="password" value="bobpass" name="password" type="password"
-                  required>
-              </div>
-              <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-            <a href="/signup" class="btn">Sign Up</a>
-          </div>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <form class="d-flex" method="POST" action="/login">
+                <div class="me-2">
+                  <input class="form-control" placeholder="username" value="bob" name="username" type="text" required>
+                </div>
+                <div class="me-2">
+                  <input class="form-control" placeholder="password" value="bobpass" name="password" type="password"
+                    required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+              </form>
+            </li>
+            <li class="nav-item">
+              <a href="/signup" class="btn">Sign Up</a>
+            </li>
+          </ul>
           {% endif %}
         </div>
       </div>

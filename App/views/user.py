@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, request, send_from_directory, flash, redirect, url_for
+from flask import Blueprint, render_template, jsonify, request, send_file, flash, redirect, url_for
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
 from werkzeug.datastructures import FileStorage
 
@@ -7,6 +7,7 @@ from.index import index_views
 from App.controllers import *
 
 from App.models import User, Company, Job, Student, Staff, Admin, Application, Shortlist
+from App import app
 
 user_views = Blueprint('user_views', __name__, template_folder='../templates')
 
@@ -130,6 +131,26 @@ def get_job_page(id: int = None):
 
     return render_template(f'{user.type}/jobs.html', jobs=jobs)
 
+@user_views.route('/resume/<int:student_id>', methods=['GET'])
+@roles_required(['student', 'admin', 'staff'])
+def get_resume_page(student_id: int):
+    try:
+        student = Student.query.get(student_id)
+        if not student:
+            flash("Student not found")
+            return redirect(request.referrer or url_for('user_views.get_student_applications_page'))
+
+        if not student.resume:
+            flash("Resume not found")
+            return redirect(request.referrer or url_for('user_views.get_student_applications_page'))
+
+        file_path = os.path.join("../", app.config['UPLOAD_FOLDER'], student.resume)
+        print(file_path)
+        return send_file(file_path, mimetype='application/pdf')
+
+    except Exception as e:
+        flash(f"An error occurred: {str(e)}")
+        return redirect(request.referrer or url_for('user_views.get_student_applications_page'))
 
 @user_views.route('/new-job', methods=['GET'])
 @roles_required(['admin'])

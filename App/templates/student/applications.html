@@ -27,7 +27,7 @@
             {% if applications %}
             <ul>
                 {% for application in applications %}
-                <li class="list-group-item d-flex justify-content-between align-items-center position-relative">
+                <li class="list-group-item gap-2 d-flex justify-content-between align-items-center position-relative">
                     <div>
                         <h5>{{ application.job.title }}</h5>
                         <p class="text-muted">{{ application.job.company.name }}</p>
@@ -40,6 +40,9 @@
                             <li><strong>Email:</strong> {{ application.email }}</li>
                             <li><strong>Cover Letter:</strong> {{ application.cover_letter }}</li>
                             <li><strong>Shortlisted:</strong> {{ "Yes" if application.is_shortlisted() else "No" }}</li>
+                            {% if current_user.resume %}
+                            <li><strong>Resume:</strong> <a href="/resume/{{current_user.id}}">View</a></li>
+                            {% endif %}
                         </ul>
                     </div>
                     <form action="/applications/delete/{{ application.id }}" method="POST"

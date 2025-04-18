@@ -20,7 +20,7 @@
     <section class="container mt-5">
         <div class="row">
             <!-- Companies Column -->
-            <div class="col-12 col-lg-6">
+            <div class="col-12 col-lg-6 pb-5">
                 <h2>Available Jobs</h2>
                 <!-- Add company list or dropdown here -->
                 <div class="mt-3 mb-4">
@@ -32,7 +32,7 @@
                 {% if jobs %}
                 <ul class="list-group mt-3" style="max-height: 450px; overflow-y: auto;" id="job-list">
                     {% for job in jobs %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center job-item {% if selected_job and job.id == selected_job.id %}active{% endif %}"
+                    <li class="list-group-item gap-2 d-flex justify-content-between align-items-center job-item {% if selected_job and job.id == selected_job.id %}active{% endif %}"
                         data-title="{{ job.title | lower }}" data-company="{{ job.company.name | lower }}">
                         <div>
                             <h5 class="bold job-title"><strong>{{ job.title }}</strong></h5>
@@ -82,6 +82,7 @@
                                     <th scope="col">Student Name</th>
                                     <th scope="col">Email</th>
                                     <th scope="col">Cover Letter</th>
+                                    <th scope="col">Resume</th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
@@ -94,6 +95,11 @@
                                     <td>
                                         {{ application.cover_letter }}
                                     </td>
+                                    {% if current_user.resume %}
+                                    <td><a href="/resume/{{current_user.id}}">View</a></td>
+                                    {% else %}
+                                    <td>No resume uploaded</td>
+                                    {% endif %}
                                     <td>
                                         <form method="POST" action="/shortlists/{{ application.id }}">
                                             <input type="hidden" name="job_id" value="{{ selected_job.id }}">

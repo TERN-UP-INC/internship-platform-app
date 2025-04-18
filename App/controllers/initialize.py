@@ -71,4 +71,13 @@ def initialize():
         for row in reader:
             add_student_to_shortlist(job_id=row['job_id'], application_id=row['application_id'])
 
+    # delete uploads folder
+    uploads_folder = os.path.join(project_root, '../uploads/resumes')
+    if os.path.exists(uploads_folder):
+        for filename in os.listdir(uploads_folder):
+            file_path = os.path.join(uploads_folder, filename)
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                print(f"Error deleting file {file_path}: {e}")
 
