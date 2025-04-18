@@ -4,13 +4,10 @@
 
 {% block user_routes %}
 <li class="nav-item">
-    <a class="nav-link" href="/jobs">Jobs</a>
+    <a class="nav-link" href="/apply">Apply</a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="/new-job">New Job</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="/manage-staff">Manage Staff</a>
+    <a class="nav-link" href="/applications">My Applications</a>
 </li>
 {% endblock %}
 
@@ -22,10 +19,10 @@
                 src="{{url_for('static', filename='images/hero-image.jpg')}}" alt="Welcome Image" class="img-fluid">
         </div>
         <div class="col-md-6 mt-4 mt-md-0">
-            <img style="width: 80px; border-radius: 8px; border: 5px solid white;"
+            <img class="mb-4" style="width: 80px; border-radius: 8px; border: 5px solid white;"
                 src="{{ url_for('static', filename='android-chrome-512x512.png') }}" alt="logo">
             <h1 class="display-4 fw-bold">WELCOME TO TERNUP</h1>
-            <a href="/apply" class="btn btn-dark btn-lg">Apply Now</a>
+            <a href="/apply" class="btn btn-dark btn-lg mt-5">Apply Now</a>
         </div>
     </section>
 

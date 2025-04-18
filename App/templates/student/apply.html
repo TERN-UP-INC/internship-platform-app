@@ -1,0 +1,164 @@
+{% extends "layout.html" %}
+{% block title %}TernUp Inc.{% endblock %}
+{% block page %}Apply{% endblock %}
+
+{{ super() }}
+
+{% block user_routes %}
+<li class="nav-item">
+    <a class="nav-link active" href="/apply">Apply</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="/applications">My Applications</a>
+</li>
+{% endblock %}
+
+{% block content %}
+<main>
+    <section class="container">
+        <h1>Internships</h1>
+        <p>Fill out the form below to apply for an internship position. Provide accurate and complete information to
+            ensure
+            your application is processed successfully.</p>
+    </section>
+    <section class="container mt-5">
+        <div class="row">
+            <!-- Companies Column -->
+            <div class="col-12 col-lg-6 pb-5">
+                <h2>Available Jobs</h2>
+                <!-- Add company list or dropdown here -->
+                <div class="mt-3 mb-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="job_search"
+                            placeholder="Search by job title or company name">
+                    </div>
+                </div>
+                {% if jobs %}
+                <ul class="list-group mt-3" style="max-height: 450px; overflow-y: auto;" id="job-list">
+                    {% for job in jobs %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center job-item {% if selected_job and job.id == selected_job.id %}active{% endif %}"
+                        data-title="{{ job.title | lower }}" data-company="{{ job.company.name | lower }}">
+                        <div>
+                            <h5 class="bold job-title"><strong>{{ job.title }}</strong></h5>
+                            <p class="mb-1">{{ job.description }}</p>
+                            <small
+                                class="company-name {% if selected_job and job.id == selected_job.id %}text-light{% else %}text-muted{% endif %}">Company:
+                                {{ job.company.name }}</small>
+                        </div>
+                        {% if not selected_job or job.id != selected_job.id %}
+                        <a href="/apply/{{ job.id }}" class="btn btn-primary">Select</a>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                <script>
+                    document.addEventListener('DOMContentLoaded', () =>
+                    {
+                        const selectedJob = document.querySelector('.list-group-item.active');
+                        if (selectedJob)
+                        {
+                            selectedJob.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    });
+                </script>
+                {% else %}
+                <div class="alert alert-info mt-3" role="alert">
+                    No jobs are currently available for application. Please check back later.
+                </div>
+                {% endif %}
+            </div>
+            <!-- Application Form Column -->
+            <div class="col-12 col-lg-6 mt-4 mt-lg-0">
+                {% if selected_job %}
+                <h2>Apply for {{ selected_job.title }}</h2>
+                <div class="card mb-4 mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3"><strong>Company:</strong> {{ selected_job.company.name }}</h5>
+                        <h6 class="card-subtitle text-muted">Company Description:</h6>
+                        <p class="card-text">{{ selected_job.company.description }}</p>
+                        <h6 class="card-subtitle text-muted">Job Description:</h6>
+                        <p class="card-text">{{ selected_job.description }}</p>
+                    </div>
+                </div>
+
+                <form action="/apply/{{ selected_job.id }}" enctype="multipart/form-data" method="post">
+                    <div class="mb-3">
+                        <label for="first_name" class="form-label">First Name</label>
+                        <input type="text" value="{{ current_user.firstname }}" class="form-control" id="first_name"
+                            name="first_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="last_name" class="form-label">Last Name</label>
+                        <input type="text" value="{{ current_user.lastname }}" class="form-control" id="last_name"
+                            name="last_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="phone" name="phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cover_letter" class="form-label">Cover Letter</label>
+                        <textarea class="form-control" id="cover_letter" name="cover_letter" rows="5"
+                            required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="resume" class="form-label">Upload Resume</label>
+                        <input type="file" class="form-control" id="resume" name="resume" accept=".pdf" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Apply</button>
+                </form>
+                {% else %}
+                <h2>No job selected</h2>
+                <div class="alert alert-warning mt-3" role="alert">
+                    Please select a job to apply.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', () =>
+    {
+        const searchInput = document.getElementById('job_search');
+        const jobItems = document.querySelectorAll('.job-item');
+
+        searchInput.addEventListener('input', () =>
+        {
+            const query = searchInput.value.toLowerCase();
+            const jobList = document.querySelector('.list-group');
+
+            let filteredJobs = Array.from(jobItems).filter(item =>
+            {
+                const title = item.getAttribute('data-title');
+                const company = item.getAttribute('data-company');
+                return title.includes(query) || company.includes(query);
+            });
+
+            if (filteredJobs.length > 0)
+            {
+                jobList.innerHTML = '';
+                filteredJobs.forEach(item =>
+                {
+                    jobList.appendChild(item);
+                });
+            } else
+            {
+                jobList.innerHTML = `
+                <div class="alert alert-info mt-3" role="alert">
+                No jobs match your search criteria.
+                </div>
+            `;
+            }
+        });
+    }
+    );
+</script>
+{% endblock %}

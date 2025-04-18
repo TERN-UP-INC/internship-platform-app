@@ -5,51 +5,45 @@
 {{ super() }}
 
 {% block content %}
-    <div class="row">
+    <div class="container">
+      <div class="row">
         <p>
-            This is table is renderd on the Server. Flask gets the data from the database and uses jinja templates to dyanmically render this page when a request is sent to <a href="/users">/users</a>.
+          This table is rendered on the server. Flask gets the data from the database and uses Jinja templates to dynamically render this page when a request is sent to <a href="/users">/users</a>.
         </p>
-    </div>
+      </div>
 
-    <div class="row">
-      <form class="col s12" method="POST" action="/users">
-        
-        <div class="row">
-          <div class="input-field col s6">
-            <input placeholder="Username" name="username" type="text" class="validate">
-            <label for="username">Username</label>
+      <div class="row">
+        <form method="POST" action="/users">
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Username">
           </div>
-          <div class="input-field col s6">
-            <input placeholder="password" name="password" type="password" class="validate">
-            <label for="password">Password</label>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
           </div>
-        </div>
-      
-        <div class="row">
-          <div class="input-field col s12">
-            <button class="btn waves-effect waves-light right purple" type="submit" name="action">Submit</button>
-          </div>
-        </div> 
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
 
-      </form>
-    </div>
-
-    <div class="row">
-      <table>
-        <thead>
-          <tr>
-            <th>Id</th><th>Username</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for user in users %}
+      <div class="row mt-4">
+        <table class="table table-striped">
+          <thead>
             <tr>
-                <td>{{user.id}}</td>
-                <td>{{user.username}}</td>
+              <th scope="col">Id</th>
+              <th scope="col">Username</th>
             </tr>
-          {% endfor %}
-        <tbody>
-      </table>
+          </thead>
+          <tbody>
+            {% for user in users %}
+              <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
 
 {% endblock %}

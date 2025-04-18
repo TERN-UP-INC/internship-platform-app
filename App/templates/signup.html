@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block title %}TernUp Inc.{% endblock %}
+{% block page %}Login{% endblock %}
+
+
+{% block content %}
+
+<main>
+  <section class="container">
+    <h1>Sign Up</h1>
+    <p>Fill out the form below to create a new student account. Provide accurate and complete information to ensure your
+      registration is successful.</p>
+  </section>
+
+  <section class="container mt-5">
+    <div class="card mx-auto" style="max-width: 500px;">
+      <div class="card-body">
+        <form action="/signup" method="post">
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="firstname" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="firstname" name="firstname" required>
+          </div>
+          <div class="mb-3">
+            <label for="lastname" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="lastname" name="lastname" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+          </div>
+          <div class="mb-3">
+            <label for="confirm_password" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

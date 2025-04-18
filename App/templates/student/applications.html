@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block title %}TernUp Inc.{% endblock %}
+{% block page %}Apply{% endblock %}
+
+{{ super() }}
+
+{% block user_routes %}
+<li class="nav-item">
+    <a class="nav-link" href="/apply">Apply</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" href="/applications">My Applications</a>
+</li>
+{% endblock %}
+
+{% block content %}
+<main>
+    <section class="container">
+        <h1>Applications</h1>
+        <p>Below is a list of your current job applications. You can review the details or delete an application if
+            needed.
+        </p>
+    </section>
+
+    <section class="container mt-5">
+        <div class="row">
+            {% if applications %}
+            <ul>
+                {% for application in applications %}
+                <li class="list-group-item gap-2 d-flex justify-content-between align-items-center position-relative">
+                    <div>
+                        <h5>{{ application.job.title }}</h5>
+                        <p class="text-muted">{{ application.job.company.name }}</p>
+                        <p>{{ application.job.description }}</p>
+                        <ul class="list-unstyled">
+                            <li><strong>Applicant Name:</strong> {{ application.first_name }} {{ application.last_name
+                                }}
+                            </li>
+                            <li><strong>Phone:</strong> {{ application.phone }}</li>
+                            <li><strong>Email:</strong> {{ application.email }}</li>
+                            <li><strong>Cover Letter:</strong> {{ application.cover_letter }}</li>
+                            <li><strong>Shortlisted:</strong> {{ "Yes" if application.is_shortlisted() else "No" }}</li>
+                            {% if current_user.resume %}
+                            <li><strong>Resume:</strong> <a href="/resume/{{current_user.id}}">View</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <form action="/applications/delete/{{ application.id }}" method="POST"
+                        style="position: absolute; top: 10px; right: 10px;">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="alert alert-info mt-3" role="alert">
+                You have no applications yet. Please apply for a job to see your applications here.
+            </div>
+            {% endif %}
+        </div>
+    </section>
+</main>
+
+{% endblock %}
