@@ -1,169 +1,49 @@
-<!doctype html>
-<html>
+{% extends "layout.html" %}
+{% block title %}TernUp Inc.{% endblock %}
+{% block page %}Login{% endblock %}
 
-  <head>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
-    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up | TernUp Inc.</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+{% block content %}
 
-      body {
-        font-family: Inter, Arial, sans-serif;
-        line-height: 1.6;
-        background-color: #f8f9fa;
-      }
-      
-      .signup-container {
-        max-width: 500px;
-        margin: 0 auto;
-      }
-      
-      .signup-card {
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-      }
-      
-      .signup-header {
-        background: linear-gradient(135deg, #003cff, #003cff);
-        color: white;
-        border-radius: 15px 15px 0 0 !important;
-        padding: 2rem;
-        text-align: center;
-      }
-      
-      .btn-signup {
-        background: linear-gradient(135deg, #003cff, #003cff);
-        border: none;
-        padding: 12px;
-        font-weight: bold;
-      }
-      
-      .btn-signup:hover {
-        opacity: 0.9;
-        transform: translateY(-2px);
-      }
-      
-      .login-link {
-        color: #6e8efb;
-        text-decoration: none;
-      }
-      
-      .login-link:hover {
-        text-decoration: underline;
-      }
-    </style>
-  </head>
+<main>
+  <section class="container">
+    <h1>Sign Up</h1>
+    <p>Fill out the form below to create a new student account. Provide accurate and complete information to ensure your
+      registration is successful.</p>
+  </section>
 
-  <body>
-    <nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light px-5">
-      <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="/">TernUp Inc.</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            {% if is_authenticated %}
-            {% block user_routes %}{% endblock %}
-            {% endif %}
-          </ul>
-    
-          {% if is_authenticated %}
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">Logout</a>
-            </li>
-          </ul>
-          {% endif %}
-        </div>
-      </div>
-    </nav>
-      </div>
-    </nav>
-
-    <main class="container mt-5">
-      <div class="signup-container">
-        <div class="card signup-card">
-          <div class="card-header signup-header">
-            <h2>Create Your Account</h2>
-            <p class="mb-0">Start your journey with TernUp today</p>
+  <section class="container mt-5">
+    <div class="card mx-auto" style="max-width: 500px;">
+      <div class="card-body">
+        <form action="/signup" method="post">
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" required>
           </div>
-          <div class="card-body p-4">
-            <form method="POST" action="/Signup">
-              <div class="mb-3">
-                <label for="FirstName" class="form-label">First Name</label>
-                <input type="text" class="form-control" id="FirstName" name="FirstName" required>
-              </div>
-                <div class="mb-3">
-                    <label for="LastName" class="form-label">Last Name</label>
-                    <input type="text" class="form-control" id="LastName" name="LastName" required>
-              <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" required>
-              </div>
-              <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-                <div class="form-text">At least 8 characters</div>
-              </div>
-              <div class="mb-3">
-                <label for="confirmPassword" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
-              </div>
-              <button type="submit" class="btn btn-signup btn-primary w-100 mt-3">Sign Up</button>
-            </form>
-            <div class="text-center mt-3"></div>
-            <form class="d-flex mt-3" method="GET" action="/">
-              <button type="submit" class="btn btn-light w-100">Already have an account? Log in</button>
-            </form>
-            </div>
+          <div class="mb-3">
+            <label for="firstname" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="firstname" name="firstname" required>
           </div>
-        </div>
+          <div class="mb-3">
+            <label for="lastname" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="lastname" name="lastname" required>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+          </div>
+          <div class="mb-3">
+            <label for="confirm_password" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+        </form>
       </div>
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-      crossorigin="anonymous"></script>
-    <script>
-      {% with messages = get_flashed_messages() %}
-      {% if messages %}
-      {% for message in messages %}
-      const toastEl = document.createElement('div');
-      toastEl.className = 'toast align-items-center text-white bg-primary border-0 position-fixed';
-      toastEl.setAttribute('role', 'alert');
-      toastEl.setAttribute('aria-live', 'assertive');
-      toastEl.setAttribute('aria-atomic', 'true');
-      toastEl.style.bottom = '1rem';
-      toastEl.style.right = '1rem';
-      toastEl.style.zIndex = '1050';
-      toastEl.innerHTML = `
-            <div class="d-flex">
-              <div class="toast-body">
-                {{ message}}
-              </div>
-              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-          `;
-      document.body.appendChild(toastEl);
-      const toast = new bootstrap.Toast(toastEl);
-      toast.show();
-      {% endfor %}
-      {% endif %}
-      {% endwith %}
-    </script>
-  </body>
-</html>
+    </div>
+  </section>
+</main>
+{% endblock %}

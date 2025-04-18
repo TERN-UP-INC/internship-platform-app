@@ -9,7 +9,7 @@ index_views = Blueprint('index_views', __name__, template_folder='../templates')
 def index_page():
     verify_jwt_in_request(optional=True)
     user_id = get_jwt_identity()
-        
+
     if user_id:
         current_user = User.query.get(user_id)
         return render_template(f'{current_user.type}/index.html', current_user=current_user)
