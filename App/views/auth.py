@@ -1,13 +1,17 @@
 from flask import Blueprint, render_template, jsonify, request, flash, send_from_directory, flash, redirect, url_for
-from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
-
-
+from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies, create_access_token
+import csv, os
+from App.models.user import Student
 from.index import index_views
 
 from App.controllers import (
     login
 )
 
+from App.controllers import(
+    get_user_by_username, 
+    create_student
+    )
 auth_views = Blueprint('auth_views', __name__, template_folder='../templates')
 
 
@@ -40,6 +44,42 @@ def logout_action():
     unset_jwt_cookies(response)
     return response
 
+@auth_views.route('/Signup', methods=['GET'])
+def signup_page():
+    return render_template('signup.html', title="Signup")
+
+
+
+@auth_views.route('/Signup', methods=['POST'])
+def signup_action():
+    data = request.form
+    if get_user_by_username(data['username']):
+        flash('Username already exists')
+        return redirect(url_for('auth_views.signup_action', title ="Signup"))
+    if get_user_by_username(data['username']):
+        flash('Username already exists')
+        return redirect(url_for('auth_views.signup_action', title ="Signup"))
+    if data['password'] != data['confirm_password']:
+        flash('Password and Confirm Password do not match')
+        return redirect(url_for('auth_views.signup_action', title ="Signup"))
+    new_student = create_student(
+        username=data['username'],
+        password=data['password'],
+        firstname=data['FirstName'],
+        lastname=data['LastName'],
+    )
+    csv_file_path = os.path.join(os.path.dirname(__file__), '../data/students.csv')
+    with open(csv_file_path, mode='a', newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow([new_student.id, data['username'], data['password'], data['FirstName'], data['LastName']])
+    
+    token = login(data['username'], data['password'])
+    response = redirect(url_for('index_views.index_page'))
+    set_access_cookies(response, token)
+    flash('Signup Successful')
+    return response
+    
+    
 '''
 API Routes
 '''
