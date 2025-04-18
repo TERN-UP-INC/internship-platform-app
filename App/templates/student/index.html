@@ -14,9 +14,26 @@
 {% endblock %}
 
 {% block content %}
-<h1>Flask MVC</h1>
-{% if is_authenticated %}
-<p> Welcome {{current_user.username}} </p>
-{% endif %}
-<p>This is a boileplate flask application which follows the MVC pattern for structuring the project.</p>
+
+    <div class="container text-center mt-5">
+        <div class="row align-items-center">
+            <div class="col-md-6 order-md-1">
+                <img src="{{ url_for('static', filename='images/Hero.png') }}" alt="Welcome Image" class="img-fluid">
+            </div>
+            <div class="col-md-6 order-md-2">
+                <h1 class="display-4 fw-bold">Welcome {{current_user.firstname}}</h1>
+                <a href= "{{url_for('user_views.get_student_apply_page')}}"class="btn btn-dark btn-lg mt-3">Apply Now</a>
+            </div>
+        </div>
+
+    <!-- About Us Section -->
+    <div class="about mt-5">
+        <h2 class="fw-bold">About Us</h2>
+        <p class="mt-3">We are dedicated to providing the best internship experiences and career opportunities for students and professionals.</p>
+        <p>Our platform connects students with top companies, ensuring a seamless and enriching internship experience.</p>
+        <div class="about-image mt-4">
+            <img src="{{ url_for('static', filename='images/fig1.png') }}" alt="About Us Image" class="img-fluid rounded">
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -137,6 +137,59 @@ def get_shortlists_page():
     user = User.query.get(jwt_current_user.id)
     return render_template('admin/new-job.html')
 
+@user_views.route('/manage-staff', methods=['GET'])
+@roles_required(['admin'])
+def get_staff_page():
+    user = Admin.query.get(jwt_current_user.id)
+    staff = Staff.query.filter_by(company_id=user.company_id).all()
+    return render_template('admin/manage-staff.html', staff=staff)
+
+@user_views.route('/manage-staff/add', methods=['POST'])
+@roles_required(['admin'])
+def add_staff_action():
+    data = request.form
+    user = Admin.query.get(jwt_current_user.id)
+    new_staff = Staff(
+        username=data.get('username'),
+        password=data.get('password'),
+        firstname=data.get('firstname'),
+        lastname=data.get('lastname'),
+        company_id=user.company_id
+    )
+    db.session.add(new_staff)
+    db.session.commit()
+    flash(f"Staff member {new_staff.firstname} {new_staff.lastname} added successfully!")
+    return redirect(url_for('user_views.get_staff_page'))
+
+@user_views.route('/manage-staff/edit/<int:staff_id>', methods=['POST'])
+@roles_required(['admin'])
+def edit_staff_action(staff_id):
+    staff = Staff.query.get(staff_id)
+    if not staff:
+        flash("Staff member not found")
+        return redirect(url_for('user_views.get_staff_page'))
+
+    data = request.form
+    staff.firstname = data.get('firstname')
+    staff.lastname = data.get('lastname')
+    staff.username = data.get('username')
+    db.session.commit()
+    flash("Staff member updated successfully")
+    return redirect(url_for('user_views.get_staff_page'))
+
+@user_views.route('/manage-staff/delete/<int:staff_id>', methods=['POST'])
+@roles_required(['admin'])
+def delete_staff_action(staff_id):
+    staff = Staff.query.get(staff_id)
+    if not staff:
+        flash("Staff member not found")
+        return redirect(url_for('user_views.get_staff_page'))
+
+    db.session.delete(staff)
+    db.session.commit()
+    flash("Staff member removed successfully")
+    return redirect(url_for('user_views.get_staff_page'))
+
 @user_views.route('/users', methods=['POST'])
 def create_user_action():
     data = request.form
